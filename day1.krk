@@ -1,0 +1,27 @@
+#!/usr/bin/env kuroko
+'''
+2022 Day 1
+'''
+import fileio
+import kuroko
+
+let data
+with fileio.open(kuroko.argv[1] if len(kuroko.argv) > 1 else kuroko.argv[0].replace('.krk','.txt'),'r') as f:
+    data = f.readlines()
+
+let lines = [line.strip() for line in data]
+
+let elfs = []
+let this = []
+
+for line in lines:
+    let x = line.strip()
+    if not x:
+        this = []
+        elfs.append(this)
+        continue
+    this.append(int(x))
+
+let s = sorted(sum(x) for x in elfs)
+print(s[-1])
+print(sum(s[-3:]))
