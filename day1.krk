@@ -14,8 +14,7 @@ let lines = [line.strip() for line in data]
 let elfs = []
 let this = []
 
-for line in lines:
-    let x = line.strip()
+for x in lines:
     if not x:
         this = []
         elfs.append(this)
