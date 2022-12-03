@@ -32,21 +32,13 @@ print(s)
 from collections import defaultdict
 
 let s = 0
-let i = 0
-let l = len(lines)
-while i < l:
+for i in range(0,len(lines),3):
     let owners = defaultdict(lambda: set())
-
     for line in lines[i:i+3]:
         for c in line:
             owners[c].add(line)
-
-    let found = False
     for k,v in owners.items():
         if len(v) == 3:
             s += p(k)
-            found = True
-
-    i += 3
 
 print(s)
