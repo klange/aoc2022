@@ -6,14 +6,10 @@ from aoc import lines
 
 for direction in (1, -1):
 
-    let stacks = []
-    let stage = 0
-
+    let stacks = [[] for _ in range(9)]
     let instructions = []
 
-    for i in range(9):
-        stacks.append([])
-
+    let stage = 0
     for line in lines:
         if not line:
             stage++
