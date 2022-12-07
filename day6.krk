@@ -2,11 +2,9 @@
 '''
 Day 6
 '''
-import fileio, kuroko
-with fileio.open(kuroko.argv[1] if len(kuroko.argv) > 1 else kuroko.argv[0].replace('.krk','.txt'),'r') as f:
-    let data = f.read().strip()
-    for width in (4, 14):
-        for i in range(width,len(data)):
-            if len(set(data[i-width:i])) == width:
-                print(i)
-                break
+from aoc import data_stripped as data
+for width in (4, 14):
+    for i in range(width,len(data)):
+        if len(set(data[i-width:i])) == width:
+            print(i)
+            break

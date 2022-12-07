@@ -2,14 +2,7 @@
 '''
 2022 Day 1
 '''
-import fileio
-import kuroko
-
-let data
-with fileio.open(kuroko.argv[1] if len(kuroko.argv) > 1 else kuroko.argv[0].replace('.krk','.txt'),'r') as f:
-    data = f.readlines()
-
-let lines = [line.strip() for line in data]
+from aoc import lines
 
 let elfs = []
 let this = []
