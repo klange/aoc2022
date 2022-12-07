@@ -1,0 +1,63 @@
+from aoc import lines
+
+def flatten(d):
+    return '/' + '/'.join(d)
+
+let fs = {}
+
+let cwd = []
+let cmd = True
+for line in lines:
+    if not cmd:
+        if line.startswith('$'):
+            cmd = True
+        else:
+            let a, b = line.split(' ')
+            if flatten(cwd) not in fs:
+                fs[flatten(cwd)] = {}
+            if a == 'dir':
+                fs[flatten(cwd)][b] = None
+                continue
+            fs[flatten(cwd)][b] = int(a)
+    if cmd:
+        if line.startswith('$ cd'):
+            let d = line[5:]
+            if d == '/':
+                cwd = []
+            else if d == '..':
+                cwd.pop()
+            else:
+                cwd.append(d)
+        else if line.startswith('$ ls'):
+            cmd = False
+
+let sizes = {}
+
+def getsize(d):
+    if d in sizes:
+        return sizes[d]
+    let entries = fs[d]
+    let size = 0
+    for entry in entries.keys():
+        if entries[entry] is None:
+            size += getsize((d if d != '/' else '')  + '/' + entry)
+        else:
+            size += entries[entry]
+    return size
+
+for d in fs.keys():
+    sizes[d] = getsize(d)
+
+let s = 0
+for k,v in sizes.items():
+    if v <= 100000:
+        s += v
+print(s)
+
+let available = 70000000 - sizes['/']
+let best = None
+for k,v in sizes.items():
+    if available + v >= 30000000:
+        if best is None or v < best:
+            best = v
+print(best)
