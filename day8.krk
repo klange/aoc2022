@@ -1,0 +1,86 @@
+from aoc import lines
+
+let width = len(lines[0])
+let height = len(lines)
+
+let visible = {}
+
+if False:
+    def edge_from(h, j, i, direction):
+        let a, b = direction
+        j += a
+        i += b
+        while j >= 0 and i >= 0 and j < height and i < width:
+            if int(lines[j][i]) >= h:
+                return False # No, there's a bigger tree blocking us
+            j += a
+            i += b
+        return True
+
+    for j in range(height):
+        for i in range(width):
+            let me = int(lines[j][i])
+            if any(edge_from(me, j, i, direction) for direction in ((-1,0),(1,0),(0,-1),(0,1))):
+                visible[j,i] = 1
+else:
+    for j in range(height):
+        let maxheight = -1
+        for i in range(width):
+            if int(lines[j][i]) > maxheight:
+                visible[j,i] = 1
+                maxheight = int(lines[j][i])
+
+    for j in range(height):
+        let maxheight = -1
+        for i in range(width-1,-1,-1):
+            if int(lines[j][i]) > maxheight:
+                visible[j,i] = 1
+                maxheight = int(lines[j][i])
+
+    for i in range(width):
+        let maxheight = -1
+        for j in range(height):
+            if int(lines[j][i]) > maxheight:
+                visible[j,i] = 1
+                maxheight = int(lines[j][i])
+
+    for i in range(width):
+        let maxheight = -1
+        for j in range(height-1,-1,-1):
+            if int(lines[j][i]) > maxheight:
+                visible[j,i] = 1
+                maxheight = int(lines[j][i])
+
+for j in range(height):
+    for i in range(width):
+        print('*' if (j,i) in visible else ' ',end='')
+    print()
+
+print(len(visible))
+
+let maxscore = 0
+
+def trees_from(h, j, i, direction):
+    let a, b = direction
+    j += a
+    i += b
+    let c = 0
+    while j >= 0 and i >= 0 and j < height and i < width:
+        if int(lines[j][i]) >= h:
+            c += 1
+            return c
+        c += 1
+        j += a
+        i += b
+    return c
+
+for j in range(height):
+    for i in range(width):
+        let me = int(lines[j][i])
+        let score = 1
+        for direction in ((-1,0),(1,0),(0,-1),(0,1)):
+            score *= trees_from(me, j, i, direction)
+        if score > maxscore:
+            maxscore = score
+
+print(maxscore)
