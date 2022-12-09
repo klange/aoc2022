@@ -1,0 +1,62 @@
+from aoc import lines
+
+for node_count in (1, 9):
+    let visited = {}
+
+    let x, y = 0, 0
+    let knots = []
+    for i in range(node_count):
+        knots.append((0,0))
+
+    visited[0,0] = True
+
+    def adjacent(a,b,c,d):
+        if (b == d or b == d - 1 or b == d + 1) and (a == c or a == c - 1 or a == c + 1):
+            return True
+        return False
+
+    def move_knot(last, this):
+        let x, y = last
+        let tx, ty = this
+        if not adjacent(x,y,tx,ty):
+            if x == tx and y == ty + 2:
+                ty += 1
+            else if x == tx and y == ty - 2:
+                ty -= 1
+            else if y == ty and x == tx + 2:
+                tx += 1
+            else if y == ty and x == tx - 2:
+                tx -= 1
+            else:
+                if y > ty:
+                    ty += 1
+                else if y < ty:
+                    ty -= 1
+                if x > tx:
+                    tx += 1
+                else if x < tx:
+                    tx -= 1
+        return tx, ty
+
+    for line in lines:
+        let direction, count = line.split(' ')
+        count = int(count)
+
+        for i in range(count):
+
+            if direction == 'U':
+                y -= 1
+            else if direction == 'D':
+                y += 1
+            else if direction == 'L':
+                x -= 1
+            else if direction == 'R':
+                x += 1
+
+            let last = x, y
+            for i in range(len(knots)):
+                knots[i] = move_knot(last, knots[i])
+                last = knots[i]
+            visited[knots[-1]] = True
+
+    print(len(visited))
