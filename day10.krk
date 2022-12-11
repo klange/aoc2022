@@ -1,36 +1,22 @@
 from aoc import lines
 
-let x = 1
-let c = 1
-let _s = 0
+let x, c, s, beam = 1, 1, 0, 0
 
-let beam = 0
-
-def maybe(c):
-    if beam  >= x - 1 and beam  <= x + 1:
-        print('█',end='')
-    else:
-        print(' ',end='')
-    if beam + 1 == 40:
-        print()
+def draw(c):
+    print('█' if beam  >= x - 1 and beam  <= x + 1 else ' ', end='')
+    if beam + 1 == 40: print()
 
     beam = (beam + 1) % 40
     if c == 20 or (c - 20) % 40 == 0:
-        #print(c,x*c)
-        _s += x * c
+        s += x * c
 
 for line in lines:
-    let s = line.split()
-    let op = s[0]
-
-    maybe(c)
-    if op == 'noop':
+    let op = line.split()[0]
+    draw(c)
+    c += 1
+    if op == 'addx':
+        draw(c)
         c += 1
-    else if op == 'addx':
-        c += 1
-        maybe(c)
-        c += 1
-        x = x + int(s[1])
+        x = x + int(line.split()[1])
 
-
-print(_s)
+print(s)
