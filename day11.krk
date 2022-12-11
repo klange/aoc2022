@@ -1,0 +1,53 @@
+from aoc import lines
+
+let ops = {
+    '*': lambda x,v: x * v,
+    '+': lambda x,v: x + v
+}
+
+let monkeys = {}
+let monkey, items, op, val, t_target, f_target, div
+for line in lines:
+    if 'Monkey ' in line:
+        monkey = int(line.split(' ')[1].replace(':',''))
+    else if 'Starting' in line:
+        items = [int(x) for x in line.split(': ')[1].split(', ')]
+    else if 'Operation:' in line:
+        let _ = line.split('= ')[1]
+        op = _.split(' ')[1]
+        val = _.split(' ')[2]
+    else if 'Test:' in line:
+        div = int(line.split(' by ')[1])
+    else if 'If true:' in line:
+        t_target = int(line.split(' ')[-1])
+    else if 'If false:' in line:
+        f_target = int(line.split(' ')[-1])
+        monkeys[monkey] = [items, op, val, div, t_target, f_target]
+
+let rot = 1
+for monkey in monkeys:
+    rot *= monkeys[monkey][3]
+
+for rounds in (20,10000):
+    let c = {}
+    for i in range(rounds):
+        for monkey in monkeys:
+            if monkey not in c:
+                c[monkey] = 0
+            let items, op, val, div, t_target, f_target = monkeys[monkey]
+            for item in items:
+                c[monkey] += 1
+                let v = item if val == 'old' else int(val)
+                let n = ops[op](item,v)
+                if rounds == 20:
+                    n = n // 3
+                else:
+                    n = n % rot
+                if n % div == 0:
+                    monkeys[t_target][0].append(n)
+                else:
+                    monkeys[f_target][0].append(n)
+                monkeys[monkey][0] = []
+
+    let cs = sorted([x for x in c.values()])
+    print(cs[-1] * cs[-2])
