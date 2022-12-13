@@ -1,0 +1,87 @@
+import dis
+from aoc import lines
+
+def eval(s):
+    let co = dis.build(s)
+    return function(co,(),{})()
+
+def _s(o):
+    return repr(o).replace(' ','')
+
+def compare(a,b,p=False,d=0):
+    let _p = '  ' * (d + 1) + '-'
+    if p: print('  ' * d + '-', 'Compare', _s(a), 'vs', _s(b))
+    if isinstance(a, int) and isinstance(b, int):
+        if a < b:
+            if p: print(_p, "Left is smaller, so inputs are \[[1min the right order\[[0m")
+            return True
+        else if a > b:
+            if p: print(_p, "Right side smaller, so inputs are \[[1mnot\[[0m in the right order")
+            return False
+        return 0
+    if isinstance(a, int):
+        a = [a]
+    if isinstance(b, int):
+        b = [b]
+    for _a, _b in zip(a, b):
+        let r = compare(_a, _b, p, d+1)
+        if isinstance(r, bool):
+            return r # Comparison gave a definitive answer, bubble it up.
+    if len(a) > len(b):
+        if p: print(_p, "Right side ran out of items, so inputs are \[[1mnot\[[0m in the right order")
+        return False
+    if len(a) == len(b):
+        return 0 # equal at this stage
+    if p: print(_p, "Left side ran out of items, so inputs are \[[1m in the right order\[[0m")
+    return True
+
+let s = 0
+
+let order = []
+
+class Packet:
+    def __init__(self,s):
+        self.s = s
+    def __lt__(self,o): # We only need __lt__ and __gt__ for our list sorter to function
+        return compare(self.s,o.s) is True
+    def __gt__(self,o):
+        return compare(self.s,o.s) is False
+    def __str__(self): # Print the contents but collapses spaces
+        return _s(self.s)
+
+for i in range(0,len(lines),3):
+    let a = eval(lines[i])
+    let b = eval(lines[i+1])
+
+    order.append(Packet(a))
+    order.append(Packet(b))
+
+    print('== Pair', i//3 + 1,'==')
+
+    if compare(a,b,True):
+        s += (i//3) + 1
+
+    print()
+
+print(s)
+
+let d_1 = Packet([[2]])
+order.append(d_1)
+let d_2 = Packet([[6]])
+order.append(d_2)
+
+order = sorted(order)
+
+let a, b
+
+for j in range(len(order)):
+    if order[j] is d_1:
+        a = j + 1
+        print(f'\[[1m{order[j]}\[[0m')
+    else if order[j] is d_2:
+        b = j + 1
+        print(f'\[[1m{order[j]}\[[0m')
+    else:
+        print(order[j])
+
+print(a*b)
