@@ -59,4 +59,16 @@ for node_count in (1, 9):
                 last = knots[i]
             visited[knots[-1]] = True
 
+    let mx = min(x for x,y in visited.keys())
+    let my = min(y for x,y in visited.keys())
+    let Mx = max(x for x,y in visited.keys())
+    let My = max(y for x,y in visited.keys())
+
+    for y in range(my,My+1,2):
+        for x in range(mx,Mx+1):
+            let t = (x,y) in visited
+            let b = (x,y+1) in visited
+            print('█' if t and b else '▀' if t and not b else '▄' if b and not t else ' ',end='')
+        print()
+
     print(len(visited))
