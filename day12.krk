@@ -1,0 +1,97 @@
+from aoc import lines
+
+let height = len(lines)
+let width = len(lines[0])
+
+let start = None
+let end = None
+
+for h in range(height):
+    for w in range(width):
+        if lines[h][w] == 'S':
+            start = w,h
+        if lines[h][w] == 'E':
+            end = w,h
+
+import math
+from collections import defaultdict
+
+def h(s):
+    return abs(s[0] - end[0]) + abs(s[1] - end[1])
+
+def best(openSet, score):
+    let b = None
+    let _ = None
+    for n in openSet:
+        if b is None or score[n] < _:
+            b = n
+            _ = score[n]
+    return b
+
+def d(a,b):
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def neighbors_(c):
+    let x, y = c
+    if x > 0: yield x-1, y
+    if x < width - 1: yield x+1, y
+    if y > 0: yield x, y - 1
+    if y < height - 1: yield x, y + 1
+
+def val(c):
+    let _x, _y = c
+    if lines[_y][_x] == 'S':
+        return ord('a')
+    if lines[_y][_x] == 'E':
+        return ord('z')
+    return ord(lines[_y][_x])
+
+def neighbors(c):
+    let m = val(c)
+    for n in neighbors_(c):
+        let _m = val(n)
+        if  _m <= m or _m == m + 1:
+            yield n
+
+def reconstructPath(cameFrom, current):
+    let total = [current]
+    while current in cameFrom:
+        current = cameFrom[current]
+        total.insert(0, current)
+    return total
+
+def astar(s,g):
+    let openSet = {s}
+    let cameFrom = {}
+    let gScore = defaultdict(lambda: math.inf)
+    gScore[s] = 0
+    let fScore = defaultdict(lambda: math.inf)
+    fScore[s] = h(s)
+    while openSet:
+        let current = best(openSet, fScore)
+        if current == g:
+            return reconstructPath(cameFrom, current)
+        openSet.remove(current)
+        for neighbor in neighbors(current):
+            let tentative_g = gScore[current] + d(current, neighbor)
+            if tentative_g < gScore[neighbor]:
+                cameFrom[neighbor] = current
+                gScore[neighbor] = tentative_g
+                fScore[neighbor] = tentative_g + h(neighbor)
+                if neighbor not in openSet:
+                    openSet.add(neighbor)
+    return None
+
+print(len(astar(start,end))-1)
+
+let test = 10000
+for h in range(height):
+    for w in range(width):
+        if lines[h][w] == 'a':
+            let res = astar((w,h),end)
+            if res is not None:
+                if len(res)-1 < test:
+                    test = len(res)-1
+print(test)
+
+
