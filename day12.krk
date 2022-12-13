@@ -82,16 +82,28 @@ def astar(s,g):
                     openSet.add(neighbor)
     return None
 
-print(len(astar(start,end))-1)
+let path = astar(start,end)
+print(len(path)-1)
+
+for h in range(height):
+    for w in range(width):
+        print(lines[h][w] if (w,h) not in path else f'\[[7m{lines[h][w]}\[[0m',end='')
+    print()
 
 let test = 10000
+let _best
 for h in range(height):
     for w in range(width):
         if lines[h][w] == 'a':
             let res = astar((w,h),end)
             if res is not None:
                 if len(res)-1 < test:
+                    _best = res
                     test = len(res)-1
 print(test)
 
+for h in range(height):
+    for w in range(width):
+        print(lines[h][w] if (w,h) not in _best else f'\[[7m{lines[h][w]}\[[0m',end='')
+    print()
 
