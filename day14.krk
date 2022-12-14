@@ -1,0 +1,64 @@
+from aoc import lines
+
+let baseworld = {}
+
+for line in lines:
+    let last = None
+    for coord in line.split(' -> '):
+        coord = tuple(int(_) for _ in coord.split(','))
+        if not last:
+            last = coord
+            continue
+        let x0, y0 = last
+        let x1, y1 = coord
+        if x1 < x0:
+            x0, x1 = x1, x0
+        if y1 < y0:
+            y0, y1 = y1, y0
+        if y0 == y1:
+            for x in range(x0,x1+1):
+                baseworld[x,y0] = True
+        else if x0 == x1:
+            for y in range(y0,y1+1):
+                baseworld[x0,y] = True
+        last = coord
+
+let floor = max(y for x,y in baseworld.keys()) + 2
+
+for bottom in (-1, floor):
+    let world = baseworld.copy()
+    def drop(x,y):
+        while True:
+            if (x,y+1) in world or y+1 == bottom:
+                if (x-1,y+1) in world or y+1 == bottom:
+                    if (x+1,y+1) in world or y+1 == bottom:
+                        world[x,y] = 1
+                        if x == 500 and y == 0:
+                            return True
+                        return False
+                    else:
+                        x += 1
+                else:
+                    x -= 1
+            y += 1
+            if y == floor:
+                return True
+
+    def draw():
+        let l = min(x for x,y in world.keys())
+        let r = max(x for x,y in world.keys())
+        let t = min(y for x,y in world.keys())
+        let b = max(y for x,y in world.keys())
+        for y in range(t,b+1):
+            for x in range(l,r+1):
+                print(('█' if world[x,y] is True else '❄') if (x,y) in world else ' ',end='')
+            print()
+        print()
+
+    let i = 0
+    while True:
+        i ++
+        if drop(500,0):
+            print(i - (1 if bottom == -1 else 0))
+            break
+    draw()
